@@ -1,6 +1,8 @@
 package salarycalc.entity;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
@@ -10,26 +12,36 @@ import java.util.UUID;
 public class DailyRecord {
 
     private String Id;
-    private OffsetDateTime workInTime;
-    private OffsetDateTime workOutTime;
+    private LocalDate date;
+    private ZoneOffset timeZone;
+    public LocalTime workInTime;
+    public LocalTime workOutTime;
 
-    /**
-     * disable defult constractor
-     */
-    private DailyRecord(){
-    }
+    /** 法廷内労働時間 */
+    Long LEAGAL_WORKING_LIMIT_MINUTS = Long.valueOf(480);
 
-    public DailyRecord(OffsetDateTime workInTime, OffsetDateTime workOutTime) {
+    public DailyRecord(LocalDate date, ZoneOffset timeZone ) {
         this.Id = UUID.randomUUID().toString();
-        this.workInTime = workInTime;
-        this.workOutTime = workOutTime;
-    } 
+        this.date = date;
+        this.timeZone = timeZone;
+    }
 
     public String getId () {
         return this.Id;
     }
 
+    public LocalDate getDate() {
+        return this.date;
+    }
+
+    public ZoneOffset getTimeZone() {
+        return this.timeZone;
+    }
+
     public Long getWorkingMinutes() {
+        if (workInTime == null || workOutTime == null) {
+            return null;
+        }
         return workInTime.until(workOutTime, ChronoUnit.MINUTES);
     }
 }
